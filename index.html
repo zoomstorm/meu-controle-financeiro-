@@ -175,4 +175,16 @@ document.getElementById('reset').addEventListener('click',()=>{if(confirm('Resta
 document.getElementById('export').addEventListener('click',()=>{const rows=[['Data','Tipo','Descrição','Valor'],...transactions().map(t=>[t.date,t.type,t.desc,t.amount.toFixed(2).replace('.',',')])];const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='movimentacoes_financeiras.csv';a.click();URL.revokeObjectURL(a.href);});
 load();renderTx();
 </script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .then(() => console.log("Modo offline ativado!"))
+      .catch(error => console.error("Erro:", error));
+  });
+}
+</script>
+
+
 </body></html>
