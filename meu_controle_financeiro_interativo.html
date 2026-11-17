@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+<title>Meu Controle Financeiro</title>
+<style>
+:root{--bg:#0b1220;--panel:#131e30;--panel2:#18263b;--line:#26364d;--text:#edf3fb;--muted:#9aabc1;--green:#45d6a0;--red:#ff7c86;--yellow:#ffd166;--blue:#77b7ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172944 0,#0b1220 55%);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{max-width:1050px;margin:auto;padding:24px 16px 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:22px}.eyebrow{color:var(--green);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.top h1{font-size:clamp(26px,5vw,38px);line-height:1.1;margin:5px 0}.sub{color:var(--muted);margin:0}.pill{border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--muted);font-size:12px;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card,.section{background:linear-gradient(145deg,rgba(24,38,59,.96),rgba(17,29,46,.96));border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:0 10px 30px #0002}.metric small{color:var(--muted);display:block}.metric strong{font-size:clamp(20px,3vw,27px);display:block;margin-top:7px;font-variant-numeric:tabular-nums}.green{color:var(--green)}.red{color:var(--red)}.yellow{color:var(--yellow)}.blue{color:var(--blue)}
+.section{margin-top:16px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.section h2{font-size:18px;margin:0}.hint{color:var(--muted);font-size:12px}.cols{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.rows{display:grid;gap:9px}.item{display:grid;grid-template-columns:minmax(0,1fr) 145px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #26364d}.item:last-child{border-bottom:0}.item label{font-weight:600}.item small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+input,select,button{font:inherit}input,select{width:100%;background:#0d1727;color:var(--text);border:1px solid #344761;border-radius:10px;padding:10px 11px;outline:none}input:focus,select:focus{border-color:var(--blue)}input[type=number]{font-variant-numeric:tabular-nums}
+.money{position:relative}.money:before{content:"R$";position:absolute;left:10px;top:10px;color:var(--muted);font-size:12px}.money input{padding-left:34px}
+.btn{border:0;border-radius:11px;background:var(--green);color:#082018;font-weight:800;padding:11px 15px;cursor:pointer}.btn.secondary{background:#263a55;color:var(--text);border:1px solid #3a506d}.btn.danger{background:#40232d;color:#ffb2b8;border:1px solid #78404b}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.progress{height:9px;background:#0a1422;border-radius:99px;overflow:hidden;margin:10px 0}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--green),#8ce6bf);width:0}
+.big-result{padding:16px;border-radius:14px;background:#0d1928;border:1px solid var(--line)}.big-result strong{font-size:28px;display:block;margin:4px 0}.listline{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #26364d}.listline:last-child{border:0}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 7px;border-bottom:1px solid var(--line);font-size:13px}th{color:var(--muted);font-weight:600}td:last-child{text-align:right;font-variant-numeric:tabular-nums}.empty{color:var(--muted);text-align:center;padding:18px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.formgrid .full{grid-column:1/-1}.note{font-size:12px;color:var(--muted);margin-top:12px}.tag{display:inline-block;padding:3px 8px;border-radius:99px;background:#253850;color:#b9d8ff;font-size:11px}
+footer{color:var(--muted);font-size:12px;text-align:center;margin:22px 0 0}
+@media(max-width:760px){.grid{grid-template-columns:repeat(2,1fr)}.cols{grid-template-columns:1fr}.item{grid-template-columns:minmax(0,1fr) 125px}.wrap{padding:19px 12px 40px}.pill{display:none}}
+@media(max-width:390px){.item{grid-template-columns:1fr 112px}.card,.section{padding:14px}.metric strong{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div><div class="eyebrow">Painel pessoal</div><h1>Meu dinheiro.</h1><p class="sub">Um lugar para enxergar o que entra, o que sai e o que precisa ser pago.</p></div>
+    <div class="pill">Salvo neste navegador</div>
+  </header>
+
+  <div class="grid">
+    <div class="card metric"><small>Renda mensal de referência</small><strong id="incomeTotal" class="green">R$ 4.354,00</strong><small>4 sextas + dias 05 e 20</small></div>
+    <div class="card metric"><small>Despesas conhecidas</small><strong id="expenseTotal">R$ 3.895,49</strong><small>Inclui faturas de dezembro</small></div>
+    <div class="card metric"><small>Sobra estimada</small><strong id="leftover" class="green">R$ 458,51</strong><small>Antes de gastos não listados</small></div>
+    <div class="card metric"><small>Dinheiro disponível</small><strong id="cashTotal" class="yellow">R$ 38,30</strong><small>Saldo informado em 17/11</small></div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><h2>Visão rápida do mês</h2><span class="tag">Valores editáveis</span></div>
+    <div class="cols">
+      <div>
+        <div class="listline"><span>Entradas previstas</span><strong id="incomeLine" class="green">R$ 4.354,00</strong></div>
+        <div class="listline"><span>Contas + parcelas + combustível</span><strong id="fixedLine">R$ 1.963,54</strong></div>
+        <div class="listline"><span>Faturas dos cartões</span><strong id="cardsLine">R$ 1.931,95</strong></div>
+        <div class="progress"><span id="progressBar"></span></div>
+        <div class="hint" id="progressText">89% da renda comprometida</div>
+      </div>
+      <div class="big-result"><small class="hint">O que sobra depois do que já sabemos</small><strong id="resultBig" class="green">R$ 458,51</strong><span class="hint">Ainda falta considerar alimentação, lazer, manutenção e imprevistos.</span></div>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div class="section">
+      <div class="section-head"><h2>Entradas de dinheiro</h2><span class="hint">Edite se mudar</span></div>
+      <div class="rows">
+        <div class="item"><div><label>Pagamento toda sexta</label><small>Use 4 como referência; mês com 5 sextas tem mais uma entrada</small></div><div class="money"><input id="weekly" type="number" step="0.01" value="500"></div></div>
+        <div class="item"><div><label>Pagamento dia 05</label><small>Valor informado</small></div><div class="money"><input id="pay05" type="number" step="0.01" value="1177"></div></div>
+        <div class="item"><div><label>Pagamento dia 20</label><small>Valor informado</small></div><div class="money"><input id="pay20" type="number" step="0.01" value="1177"></div></div>
+        <div class="item"><div><label>Quantidade de sextas no mês</label><small>Altere entre 4 e 5 conforme o calendário</small></div><select id="fridays"><option value="4" selected>4 sextas</option><option value="5">5 sextas</option></select></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-head"><h2>Despesas mensais</h2><span class="hint">Valores informados</span></div>
+      <div class="rows">
+        <div class="item"><div><label>Parcela normal da moto</label><small>Vencimento dia 08</small></div><div class="money"><input id="moto" type="number" step="0.01" value="789.39"></div></div>
+        <div class="item"><div><label>Financiamento do carro</label><small>Vencimento dia 21</small></div><div class="money"><input id="car" type="number" step="0.01" value="724.15"></div></div>
+        <div class="item"><div><label>Água</label><small>Média mensal</small></div><div class="money"><input id="water" type="number" step="0.01" value="70"></div></div>
+        <div class="item"><div><label>Energia</label><small>Média mensal</small></div><div class="money"><input id="power" type="number" step="0.01" value="120"></div></div>
+        <div class="item"><div><label>Combustível</label><small>R$ 60 por semana ≈ R$ 260/mês</small></div><div class="money"><input id="fuel" type="number" step="0.01" value="260"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><h2>Cartões de crédito</h2><span class="tag">Faturas de dezembro</span></div>
+    <div class="cols">
+      <div class="rows">
+        <div class="item"><div><label>Mercado Pago</label><small>Fecha dia 05 · vence dia 10</small></div><div class="money"><input id="mp" type="number" step="0.01" value="1261.17"></div></div>
+        <div class="item"><div><label>Nubank</label><small>Fecha dia 07 · vence dia 14</small></div><div class="money"><input id="nu" type="number" step="0.01" value="670.78"></div></div>
+      </div>
+      <div class="big-result"><small class="hint">Total das faturas</small><strong id="cardTotal">R$ 1.931,95</strong><span class="hint">Você informou que paga as faturas integralmente.</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><h2>Pendências da moto e 13º</h2><span class="tag">Plano de regularização</span></div>
+    <div class="cols">
+      <div class="rows">
+        <div class="item"><div><label>Parcela atrasada — mês anterior</label><small>Valor-base, sem encargos</small></div><div class="money"><input id="late1" type="number" step="0.01" value="789.39"></div></div>
+        <div class="item"><div><label>Parcela atrasada — novembro</label><small>Valor-base, sem encargos</small></div><div class="money"><input id="late2" type="number" step="0.01" value="789.39"></div></div>
+        <div class="item"><div><label>13º estimado — primeira parcela</label><small>Deixe em zero até confirmar o valor</small></div><div class="money"><input id="thirteenth" type="number" step="0.01" value="0"></div></div>
+      </div>
+      <div class="big-result"><small class="hint">Total-base dos atrasos</small><strong id="lateTotal" class="red">R$ 1.578,78</strong><div class="listline"><span>13º informado</span><b id="thirteenthLine">R$ 0,00</b></div><div class="listline"><span>Saldo após quitar atrasos</span><b id="thirteenthLeft">-R$ 1.578,78</b></div><p class="note">Confirme com a financeira o valor atualizado com juros, multa e possíveis encargos antes de pagar.</p></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><h2>Calendário de vencimentos</h2><span class="hint">Organização mensal</span></div>
+    <div class="rows">
+      <div class="listline"><span>Dia 05 · Recebimento</span><b class="green">+ R$ 1.177,00</b></div>
+      <div class="listline"><span>Dia 08 · Parcela normal da moto</span><b>R$ 789,39</b></div>
+      <div class="listline"><span>Dia 10 · Mercado Pago</span><b>R$ 1.261,17</b></div>
+      <div class="listline"><span>Dia 14 · Nubank</span><b>R$ 670,78</b></div>
+      <div class="listline"><span>Dia 20 · Recebimento</span><b class="green">+ R$ 1.177,00</b></div>
+      <div class="listline"><span>Dia 21 · Parcela do carro</span><b>R$ 724,15</b></div>
+      <div class="listline"><span>Toda sexta · Recebimento</span><b class="green">+ R$ 500,00</b></div>
+      <div class="listline"><span>Toda semana · Combustível</span><b>R$ 60,00</b></div>
+    </div>
+    <p class="note">As contas de água e energia não têm data de vencimento informada. As duas parcelas atrasadas da moto devem ser tratadas à parte com o 13º, se o valor permitir.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><h2>Registrar uma movimentação</h2><span class="hint">Entradas e gastos do dia a dia</span></div>
+    <form id="txForm" class="formgrid">
+      <input id="txDate" type="date" aria-label="Data">
+      <select id="txType"><option value="Entrada">Entrada</option><option value="Saída">Saída</option></select>
+      <input id="txDesc" class="full" placeholder="Descrição (ex.: salário, mercado, combustível)" required>
+      <input id="txAmount" type="number" min="0.01" step="0.01" placeholder="Valor em R$" required>
+      <button class="btn" type="submit">Adicionar movimentação</button>
+    </form>
+    <div class="section-head" style="margin-top:20px"><h2>Histórico</h2><button class="btn secondary" id="clearTx" type="button">Apagar histórico</button></div>
+    <div style="overflow-x:auto"><table><thead><tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Valor</th></tr></thead><tbody id="txBody"><tr><td colspan="4" class="empty">Nenhuma movimentação registrada ainda.</td></tr></tbody></table></div>
+    <div class="listline"><span>Saldo inicial informado</span><b>R$ 38,30</b></div>
+    <div class="listline"><span>Saldo atualizado pelas movimentações</span><b id="runningBalance">R$ 38,30</b></div>
+  </div>
+
+  <div class="actions" style="margin-top:16px">
+    <button class="btn secondary" id="reset" type="button">Restaurar valores iniciais</button>
+    <button class="btn" id="export" type="button">Baixar histórico CSV</button>
+  </div>
+  <footer>Os dados ficam salvos no armazenamento deste navegador/dispositivo. Não há conexão automática com bancos ou cartões. Faça uma cópia do CSV de vez em quando.</footer>
+</div>
+<script>
+const ids=['weekly','pay05','pay20','fridays','moto','car','water','power','fuel','mp','nu','late1','late2','thirteenth'];
+const defaults={weekly:500,pay05:1177,pay20:1177,fridays:4,moto:789.39,car:724.15,water:70,power:120,fuel:260,mp:1261.17,nu:670.78,late1:789.39,late2:789.39,thirteenth:0};
+const fmt=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const val=id=>Number(document.getElementById(id).value)||0;
+const set=(id,v)=>document.getElementById(id).textContent=fmt(v);
+function load(){
+  try{const saved=JSON.parse(localStorage.getItem('meuControleFinanceiro')||'{}');ids.forEach(id=>{if(saved[id]!==undefined)document.getElementById(id).value=saved[id]});}catch(e){}
+  render();
+}
+function save(){const d={};ids.forEach(id=>d[id]=document.getElementById(id).value);localStorage.setItem('meuControleFinanceiro',JSON.stringify(d));}
+function render(){
+  const income=val('weekly')*val('fridays')+val('pay05')+val('pay20');
+  const fixed=val('moto')+val('car')+val('water')+val('power')+val('fuel');
+  const cards=val('mp')+val('nu');
+  const expenses=fixed+cards, left=income-expenses, late=val('late1')+val('late2');
+  set('incomeTotal',income);set('expenseTotal',expenses);set('leftover',left);set('incomeLine',income);set('fixedLine',fixed);set('cardsLine',cards);set('resultBig',left);set('cardTotal',cards);set('lateTotal',late);set('thirteenthLine',val('thirteenth'));set('thirteenthLeft',val('thirteenth')-late);
+  document.getElementById('leftover').className=left>=0?'green':'red';
+  document.getElementById('resultBig').className=left>=0?'green':'red';
+  const pct=income>0?Math.min(100,Math.max(0,expenses/income*100)):0;
+  document.getElementById('progressBar').style.width=pct+'%';
+  document.getElementById('progressText').textContent=Math.round(pct)+'% da renda de referência comprometida';
+  save();
+}
+ids.forEach(id=>document.getElementById(id).addEventListener('input',render));
+const txKey='meuControleMovimentacoes';
+function transactions(){try{return JSON.parse(localStorage.getItem(txKey)||'[]')}catch(e){return []}}
+function saveTx(list){localStorage.setItem(txKey,JSON.stringify(list));}
+function renderTx(){
+ const list=transactions().sort((a,b)=>a.date.localeCompare(b.date));const body=document.getElementById('txBody');body.innerHTML='';
+ let balance=38.30;
+ if(!list.length){body.innerHTML='<tr><td colspan="4" class="empty">Nenhuma movimentação registrada ainda.</td></tr>';}
+ list.forEach((t,i)=>{balance += t.type==='Entrada'?t.amount:-t.amount;const tr=document.createElement('tr');[new Date(t.date+'T12:00:00').toLocaleDateString('pt-BR'),t.desc,t.type,fmt(t.amount)].forEach((v,j)=>{const td=document.createElement('td');td.textContent=v;if(j===2)td.style.color=t.type==='Entrada'?'var(--green)':'var(--red)';tr.appendChild(td)});body.appendChild(tr);});
+ document.getElementById('runningBalance').textContent=fmt(balance);
+ document.getElementById('runningBalance').className=balance>=0?'green':'red';
+}
+document.getElementById('txDate').value=new Date().toISOString().slice(0,10);
+document.getElementById('txForm').addEventListener('submit',e=>{e.preventDefault();const desc=document.getElementById('txDesc').value.trim(),amount=Number(document.getElementById('txAmount').value);if(!desc||amount<=0)return;const list=transactions();list.push({date:document.getElementById('txDate').value,type:document.getElementById('txType').value,desc,amount});saveTx(list);document.getElementById('txDesc').value='';document.getElementById('txAmount').value='';renderTx();});
+document.getElementById('clearTx').addEventListener('click',()=>{if(confirm('Apagar todas as movimentações registradas?')){saveTx([]);renderTx();}});
+document.getElementById('reset').addEventListener('click',()=>{if(confirm('Restaurar todos os valores financeiros iniciais? O histórico de movimentações será mantido.')){ids.forEach(id=>document.getElementById(id).value=defaults[id]);render();}});
+document.getElementById('export').addEventListener('click',()=>{const rows=[['Data','Tipo','Descrição','Valor'],...transactions().map(t=>[t.date,t.type,t.desc,t.amount.toFixed(2).replace('.',',')])];const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='movimentacoes_financeiras.csv';a.click();URL.revokeObjectURL(a.href);});
+load();renderTx();
+</script>
+</body></html>
